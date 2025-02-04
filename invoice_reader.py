@@ -29,7 +29,7 @@ class InvoiceReader:
                         for barcode in decoded_images:
                             if barcode.data != '' and barcode.type == 'I25':
                                 invoice: Invoice = Invoice(barcode.data.decode('utf-8'), 'I25')
-                                invoice.images.append(invoice_img_buffer)
+                                invoice.images = invoice_img_buffer.copy()
                                 invoice_list.append(invoice)
                         # Limpa o buffer
                         invoice_img_buffer.clear()
@@ -43,6 +43,8 @@ class InvoiceReader:
     def get_data_from_invoice_images(self, invoice: Invoice) -> None:
         pass
 
+    def image_preprocessing():
+        pass
     #Funcao que sera chamada fora do arquivo e juntara todas as funcoes
     def get_invoices_from_pdf():
         pass

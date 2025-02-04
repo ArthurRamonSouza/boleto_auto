@@ -6,6 +6,7 @@ class Invoice:
         self.type: str = type
         self.barcode: str = barcode
         self.images: list[Image.Image] = []
+        self.preprocessed_images = []
         self.payer_name: str = ''
         self.amount: float = float('0')
         self.creditor_name: str = ''

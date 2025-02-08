@@ -9,7 +9,7 @@ from sqlalchemy import Column, Integer, String, Float, Date, LargeBinary
 
 
 class Invoice(Base):
-    _tablename__ = "boletos"
+    __tablename__ = "boletos"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     type = Column(String(50))
@@ -26,7 +26,7 @@ class Invoice(Base):
         Beneficiário\ ou\ Cedente:\s*(?P<beneficiary_name>.+?)\s*
         # CPF/CNPJ\ do\ Beneficiário\ ou\ Cedente:\s*(?P<beneficiary_number>\d{2}\.\d{3}\.\d{3}/\d{4}[-.]\d{2})\s*
         # CPF/CNPJ\ do\ Beneficiário\ ou\ Cedente:\s*(?P<beneficiary_number>\d{2}\.?\d{3}\.?\d{3}/\d{4}[-.]\d{2})\s*
-        CPF/CNPJ\ do\ Beneficiário\ ou\ Cedente:\s*(?P<payer_number>\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{2}\.?\d{3}\.?\d{3}/\d{4}-?\d{2})\s*
+        CPF/CNPJ\ do\ Beneficiário\ ou\ Cedente:\s*(?P<beneficiary_number>\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{2}\.?\d{3}\.?\d{3}/\d{4}-?\d{2})\s*
         Sacado:\s*(?P<payer_name>.+?)\s*
         # CPF/CNPJ\ Sacado:\s*(?P<payer_number>\d{2}\.\d{3}\.\d{3}/\d{4}[-.]\d{2})\s*
         CPF/CNPJ\ Sacado:\s*(?P<payer_number>\d{3}\.?\d{3}\.?\d{3}-?\d{2}|\d{2}\.?\d{3}\.?\d{3}/\d{4}-?\d{2})\s*

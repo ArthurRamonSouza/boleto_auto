@@ -5,9 +5,9 @@ from sqlalchemy.orm import declarative_base, sessionmaker
 
 # Configurations
 load_dotenv()
-DATABASE_URL = os.getenv('DB_URL')
+DATABASE_URL = os.getenv('DATABASE_URL')
 if not DATABASE_URL:
-    raise ValueError("DB_URL não definido no .env")
+    raise ValueError("DATABASE_URL não definido no .env")
 
 # Engine is responsible for mannager the db connetion
 engine = create_engine(DATABASE_URL, echo=True)

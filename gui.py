@@ -21,7 +21,10 @@ interface_start_date = str(datetime.now().date())
 interface_on_date = ''
 interface_end_date = ''
 unread_only = False
-
+interface_db_user = ''
+interface_db_password = ''
+interface_db_name = ''
+interface_db_host = ''
 
 def set_rpa_var():
     """
@@ -63,6 +66,9 @@ def get_interface_filters() -> tuple:
     """
     return (interface_start_date, interface_on_date, interface_end_date, unread_only)
 
+def get_db_config() -> tuple:
+    return (interface_db_user, interface_db_password, interface_db_name, interface_db_host)
+
 def browse_folder() -> None:
     """
     Opens a file dialog allowing the user to select a folder for invoice storage.
@@ -73,10 +79,48 @@ def browse_folder() -> None:
         invoice_path_entry.delete(0, tk.END)
         invoice_path_entry.insert(0, folder_selected)
 
+def open_db_config_window():
+    db_window = tk.Toplevel(root)
+    db_window.title("Configuração do Banco de Dados")
+    db_window.geometry("400x350")
+    db_window.configure(bg=bg_color)
+    
+    tk.Label(db_window, text="🔧 Configuração do Banco de Dados", font=('Arial', 14, 'bold'), fg=primary_color, bg=bg_color).pack(pady=10)
+    
+    def create_labeled_entry_db(parent, label_text, show=""):
+        label = tk.Label(parent, text=label_text, font=('Arial', 12, 'bold'), fg=text_color, bg=bg_color)
+        label.pack()
+        entry = tk.Entry(parent, font=('Arial', 12), width=30, bd=2, relief='groove', show=show)
+        entry.pack(pady=5)
+        return entry
+    
+    db_user_entry = create_labeled_entry_db(db_window, "👤 Usuário:")
+    db_password_entry = create_labeled_entry_db(db_window, "🔑 Senha:", show="*")
+    db_name_entry = create_labeled_entry_db(db_window, "🗄️ Nome do Banco:")
+    db_host_entry = create_labeled_entry_db(db_window, "🌐 Host do Banco:")
+    
+    def save_db_config():
+        global interface_db_user, interface_db_password, interface_db_name, interface_db_host
+        interface_db_user = db_user_entry.get()
+        interface_db_password = db_password_entry.get()
+        interface_db_name = db_name_entry.get()
+        interface_db_host = db_host_entry.get()
+        db_window.destroy()
+    
+    save_btn = tk.Button(db_window, text="💾 Salvar", font=('Arial', 12, 'bold'), fg='white', bg=secondary_color,
+                         width=15, height=1, bd=0, relief='flat', cursor='hand2', command=save_db_config)
+    save_btn.pack(pady=10)
+    
+    def on_enter_save(e):
+        e.widget.config(bg='#27AE60')
+    
+    def on_leave_save(e):
+        e.widget.config(bg=secondary_color)
+    
+    save_btn.bind('<Enter>', on_enter_save)
+    save_btn.bind('<Leave>', on_leave_save)
+
 def start_rpa() -> None:
-    """
-    Starts the RPA process by first setting the RPA variables and then closing the window.
-    """
     global root
     set_rpa_var()
     root.destroy()
@@ -84,7 +128,7 @@ def start_rpa() -> None:
 # Main window setup
 root = tk.Tk()
 root.title('Leitor de Boleto')  # Title of the application
-root.geometry('450x600')  # Set the window size
+root.geometry('450x620')  # Set the window size
 root.configure(bg=bg_color)  # Set the background color
 
 # Set protocol for window close event
@@ -142,10 +186,15 @@ browse_btn.bind('<Enter>', on_enter)
 browse_btn.bind('<Leave>', on_leave)
 
 # Start button to initiate the RPA process
-start_btn = tk.Button(root, text='🚀 Iniciar', font=('Arial', 14, 'bold'), fg='white', bg=primary_color, 
+start_btn = tk.Button(root, text='🚀 Iniciar', font=('Arial', 12, 'bold'), fg='white', bg=primary_color, 
                       width=20, height=1, bd=0, relief='flat', cursor='hand2', command=start_rpa)
 
-start_btn.pack(pady=20)
+start_btn.pack(pady=5)
+
+# Database Configuration Button
+db_config_btn = tk.Button(root, text='🛠️ Configurar Banco', font=('Arial', 12, 'bold'), fg='white', bg=secondary_color,
+                          width=20, height=1, bd=0, relief='flat', cursor='hand2', command=open_db_config_window)
+db_config_btn.pack(pady=5)
 
 # Button hover effects for "Start" button
 def on_enter_start(e):

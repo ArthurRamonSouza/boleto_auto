@@ -1,14 +1,35 @@
 import os
 import time
-from invoice import Invoice
-from gui import get_interface_download_folder_path
+from create_db import create_tables
+from db_configuration import SessionLocal
+from models.invoice import Invoice
 from invoice_reader import InvoiceReader
 
 start_time = time.time()
 download_folder_path = "/home/arthur/Documents/Visual Studio Code/freela/engelmig/boleto_auto/download_folder"
 
 invoices_reader: InvoiceReader = InvoiceReader()
-# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/Boleto_0000000056_ENGELMIG ENERGIA LTDA_924656.pdf')
+create_tables()
+
+# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto0.pdf')
+# Beneficiário ou Cedente: ACME Telecomunicações Ltda
+# CPF/CNPJ do Beneficiário ou Cedente: 074.064.502/0001-12
+# Sacado: AME Telecomunicações Ltda
+# CPF/CNPJ Sacado: 074.064.502/0001-12
+# Vencimento: 04/12/2017
+# Valor do Documento: R$ 9,90
+
+# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto1.pdf')
+# Beneficiário ou Cedente: Conselho Regional de Enfermagem Sergipe
+# CPF/CNPJ do Beneficiário ou Cedente: 34/03/2015
+# Sacado: GUILHERME DIANGELIS GOMES
+# CPF/CNPJ Sacado: 49092-540
+# Vencimento: 34/03/2015
+# Valor do Documento: R$ 315,20
+# Error to create Invoice from: email_downloads/boleto1.pdf
+# Tempo de Processamento Total: 109.19 segundos
+
+invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/Boleto_0000000056_ENGELMIG ENERGIA LTDA_924656.pdf')
 # beneficiary_name: LUCAS MARIANO NETO LTDA
 # beneficiary_number: 10.235.548/0001-74
 # payer_name: ENGELMIG ENERGIA LTDA
@@ -17,7 +38,7 @@ invoices_reader: InvoiceReader = InvoiceReader()
 # amount: 232.86
 # Tempo de Processamento Total: 27.45 segundos
 
-invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto(s) - 2025-02-04T164353.895.pdf')
+# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto(s) - 2025-02-04T164353.895.pdf')
 # beneficiary_name: MARC CENTER HOTEL LTDA
 # beneficiary_number: 12.939.971/0001-80
 # payer_name: ENGELMIG ENERGIA LTDA
@@ -127,9 +148,15 @@ invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads
 end_time = time.time()
 elapsed_time = end_time - start_time
 
-for invoice in invoices:
-    download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
-    os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
-    invoice.save_invoice(download_file_path)
+with SessionLocal() as session:
+    try:
+        for invoice in invoices:
+            download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
+            os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
+            invoice.save_as_file(download_file_path)
+            invoice.save_to_db(session)
+        
+    except Exception as e:
+        print(f"Error to save in database: {e}")
 
 print(f"Tempo de Processamento Total: {elapsed_time:.2f} segundos")

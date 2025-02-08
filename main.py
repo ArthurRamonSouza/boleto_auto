@@ -1,4 +1,5 @@
 import os
+from create_db import create_tables
 from db_configuration import SessionLocal
 import gui
 import time
@@ -7,7 +8,8 @@ from invoice_reader import InvoiceReader, Invoice
 
 gui.root.mainloop()
 
-start_time = time.time() 
+start_time = time.time()
+create_tables()
 
 email, password = gui.get_interface_login()
 download_folder_path = gui.get_interface_download_folder_path()

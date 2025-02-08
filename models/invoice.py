@@ -12,7 +12,7 @@ class Invoice(Base):
     __tablename__ = "boletos"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    type = Column(String(50))
+    barcode_type = Column(String(50))
     barcode = Column(String(100), unique=True, nullable=False)
     payer_name = Column(String(144))
     payer_number = Column(String(50))
@@ -34,17 +34,25 @@ class Invoice(Base):
         Valor\ do\ Documento:\s*R\$\s*(?P<amount>[\d.,]+)\s*
     """, re.VERBOSE)    
 
-    def __init__(self, barcode: str, invoice_type: str):
-        self.type: str = type
+    def __init__(self, barcode: str, barcode_type: str, 
+                payer_name: str = None, 
+                payer_number: str = None,
+                amount: str = None,
+                beneficiary_name: str = None,
+                beneficiary_number: str = None,
+                due_date: any = None,
+                image: any = None
+                ):
+        self.barcode_type: str = barcode_type
         self.barcode: str = barcode
-        self.image: Image.Image = None
+        self.image: Image.Image = image
         self.preprocessed_image: Image.Image = None
-        self.payer_name: str = None
-        self.payer_number: str = None
-        self.amount: float = None
-        self.beneficiary_name: str = None
-        self.beneficiary_number: str = None
-        self.due_date: datetime.date = None
+        self.payer_name: str = payer_name
+        self.payer_number: str = payer_number
+        self.amount: float = amount
+        self.beneficiary_name: str = beneficiary_name
+        self.beneficiary_number: str = beneficiary_number
+        self.due_date: datetime.date = due_date
 
     def model_text_to_invoice(self, text_form_model: str) -> None:
         match_iter = self.REGEX_PATTERN.finditer(text_form_model)
@@ -88,7 +96,7 @@ class Invoice(Base):
                 image_bytes = image_bytes_io.getvalue()
 
             new_invoice = Invoice(
-                type=self.type,
+                barcode_type=self.barcode_type,
                 barcode=self.barcode,
                 payer_name=self.payer_name,
                 payer_number=self.payer_number,

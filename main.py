@@ -1,4 +1,5 @@
 import os
+from db_configuration import SessionLocal
 import gui
 import time
 from imap_handler import get_imap_handler, Imbox
@@ -20,6 +21,8 @@ invoice_reader: InvoiceReader = InvoiceReader()
 invoice_list: list[Invoice] = []
 
 for (uuid, message) in messages:
+    email_halder.mark_seen(uuid)
+    
     if len(message.attachments) > 0:
         for attachment in message.attachments:
             attachment_file: str = attachment['filename']
@@ -36,10 +39,16 @@ for (uuid, message) in messages:
                     except Exception as e:
                         print('Error in class main: ', e)
                         
-for invoice in invoice_list:
-    download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
-    os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
-    invoice.save_invoice(download_file_path)
+with SessionLocal() as session:
+    try:
+        for invoice in invoice_list:
+            download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
+            os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
+            invoice.save_as_file(download_file_path)
+            invoice.save_to_db(session)
+        
+    except Exception as e:
+        print(f"Error to save in database: {e}")
 
 end_time = time.time()
 elapsed_time = end_time - start_time

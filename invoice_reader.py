@@ -120,7 +120,6 @@ class InvoiceReader:
 
             attempts: int = 0
             while len(missing_fields) > 0 and attempts < 2:
-                print('Missing values: ', missing_fields)
                 self.__invoice_image_preprocessing(invoice)
                 invoice_text: str = self.__get_text_from_invoice_image(invoice)
                 model_return: str = extract_invoice_data(invoice_text)

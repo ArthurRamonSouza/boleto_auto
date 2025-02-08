@@ -17,7 +17,7 @@ invoices_reader: InvoiceReader = InvoiceReader()
 # amount: 232.86
 # Tempo de Processamento Total: 27.45 segundos
 
-# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto(s) - 2025-02-04T164353.895.pdf')
+invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto(s) - 2025-02-04T164353.895.pdf')
 # beneficiary_name: MARC CENTER HOTEL LTDA
 # beneficiary_number: 12.939.971/0001-80
 # payer_name: ENGELMIG ENERGIA LTDA
@@ -44,7 +44,7 @@ invoices_reader: InvoiceReader = InvoiceReader()
 # amount: 3460.0
 # Tempo de Processamento Total: 33.26 segundos
 
-invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/doc16732420250204174241.pdf')
+# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/doc16732420250204174241.pdf')
 # 1
 # beneficiary_name: SACFLEX LTDA
 # beneficiary_number: 50.266.341/0001-81
@@ -79,6 +79,15 @@ invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads
 
 # 5
 # Pulou
+# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto5.pdf')
+# beneficiary_name: MINAS GERAIS IMOVEIS
+# beneficiary_number: 57528515/0001-66
+# payer_name: ENGELMIG ENERGIA LTDA
+# payer_number: 21.008.139/0001-08
+# due_date: 2025-02-15
+# amount: 8347.21
+# barcode:  10497999300008347213541371000100040000399271
+# Tempo de Processamento Total: 49.35 segundos
 
 # 6
 # Pulou

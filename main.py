@@ -1,17 +1,23 @@
+import os
+import gui
+import time
 from imap_handler import get_imap_handler, Imbox
 from invoice_reader import InvoiceReader, Invoice
-from gui import root, get_download_folder_path, get_filters, get_login
 
-root.mainloop()
-email, password = get_login()
-download_folder_path = get_download_folder_path()
-date_gt, date_on, date_lt, unread_only = get_filters()
+gui.root.mainloop()
+
+start_time = time.time() 
+
+email, password = gui.get_interface_login()
+download_folder_path = gui.get_interface_download_folder_path()
+date_gt, date_on, date_lt, unread_only = gui.get_interface_filters()
 
 filters: dict = {'raw': 'has:attachment'}
 email_halder: Imbox = get_imap_handler(email, password, unread_only, date_gt, date_on, date_lt, filters)
 messages = email_halder.messages(**filters)
 
 invoice_reader: InvoiceReader = InvoiceReader()
+invoice_list: list[Invoice] = []
 
 for (uuid, message) in messages:
     if len(message.attachments) > 0:
@@ -19,14 +25,22 @@ for (uuid, message) in messages:
             attachment_file: str = attachment['filename']
 
             if '.pdf' in attachment_file:
-                download_file_path: str = f'{download_folder_path}/{attachment_file}'
+                email_download_file_path: str = f'email_downloads/{attachment_file}'
+                os.makedirs(os.path.dirname(email_download_file_path), exist_ok=True)
 
-                with open(download_file_path, 'wb') as file:
-                    file.write(attachment['content'].read())
-
+                with open(email_download_file_path, 'wb') as file:
                     try:
-                        invoice_reader.get_invoices_from_pdf(download_file_path)
+                        file.write(attachment['content'].read())
+                        invoices: list[Invoice] = invoice_reader.get_invoices_from_pdf(email_download_file_path)
+                        invoice_list.append(invoices.copy())
                     except Exception as e:
-                        print('Erro na classe main: ', e)
+                        print('Error in class main: ', e)
+                        
+for invoice in invoice_list:
+    download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
+    os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
+    invoice.save_invoice(download_file_path)
 
-
+end_time = time.time()
+elapsed_time = end_time - start_time
+print(f"Tempo de Processamento Total: {elapsed_time:.2f} segundos")

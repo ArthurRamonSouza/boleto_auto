@@ -1,213 +1,43 @@
 import ollama
-import time
+# import time
 
-text = """"sem proc
-
-Obs: Pagar Preferencialmente nas Casas Lotéricas
-
-CAIXA:::104-0
-
-RECIBO DO SACADO
-
-[Cedente
-
-FAgêncialCódigo Cedente
-
-Conselho Regional de Enfermagem - Sergipe
-
-2382/070212-9
-
-Vencimento 31/03/2015
-
-[Data do Documento
-
-[Nº do Documento
-
-Espécie Doc
-
-JAceite
-
-[Data do Processamento
-
-08/11/2012
-
-|Nosso Número
-
-24000000001108643-6
-
-F da ConlalRespo.
-
-[Carteira
-
-SR
-
-Espécie
-
-R$
-
-[Quantidade
-
-| Valor
-x
-L
-
-|] Valor do Documento
-R$ 315,28
-
-Instruções:
-Anuidade: 2016.
-COTA ÚNICA = R$ 315,28
-
-**AO BANCO: APÓS VENC.COBRAR MULTA 2% + JUROS 1% A.M**
-
-[-) Desconto
-
-|') Outras Deduções/Abatimento
-
-[5] MoraMultarJuros
-
-|) Outros Acrescimos
-
-|”) Valor Cobrado
-
-Emitido por: Guilherme Diangelis Gomes
-
-[Sacado
-GUILHERME DIANGELIS GOMES
-Conj Maria do Carmo
-49092-540 Aracaju
-
-Nº da Inscrição:
-OLARIA cPFiCGC: 000.000.000-00
-
-SE
-
-O documento de agendamento de pagamento
-iti ixa rapido não e valido
-
-lo pelo
-
-CAIXA=::104-0
-
-10490.70210 29000.200047 00110.864303 6 55330000031528
-
-[TT utenticação Mecânica
-
-[Local de Pagamento
-
-PAGÁVEL NA REDE BANCÁRIA ATÉ O VENCIMENTO
-
-Vencimento 31/03/2015
-
-[Codente
-
-Agência/Código Cedente
-
-Conselho Regional de Enfermagem - Sergipe
-
-2382/070212-9
-
-[Data do Documento [Nº do Documento Espécie Doc
-
-JAceite
-
-[Data do Processamento
-
-08/11/2012
-
-[Nosso Númer
-
-24000000001 108643-6
-
-F da ConlalRespo. [Carteira Espécie
-
-R$
-
-[Quantidade
-
-| Valor
-x
-L
-
-|] Valor do Documento
-R$ 315,28
-
-Instruções:
-Anuidade: 2016.
-COTA ÚNICA = R$ 315,28
-
-Emitido por: Guilherme Diangelis Gomes
-
-**AO BANCO: APÓS VENC.COBRAR MULTA 2% + JUROS 1% A.M**
-
-[-) Desconto
-
-|') Outras Deduções/Abatimento
-
-[5] MoraMultarJuros
-
-+) Outros Acrescimos
-
-|”) Valor Cobrado
-
-|sacado.
-
-Conj Maria do Carmo
-
-E
-
-OLARIA
-
-Nº da Inscrição:
-
-CPFICGC: 000.000.000-0
-
-GUILHERME DIANGELIS GOMES
-
-49092-540 Aracaju
-
-s
-
-[TT tentcação Mecânica
-
-Esse documento deverá ser guardado por no
-
-FICHA DE COMPENSAÇÃO
-
-mínimo 5 anos
-
-"""
-
-def extract_invoice_data(text):
-    start_time = time.time() 
+def extract_invoice_data(text) -> str:
+    # start_time = time.time() 
 
     prompt = (
-        "Extraia os valores de: Cedente, Código do Cedente, Sacado, CPF/CNPJ, "
-        "Vencimento, Valor do Documento, Nosso Número, Data do Processamento, do texto:\n"
-        f"{text}\n\n"
-        "A resposta deve ser somente os dados encontrados, não adicione nada na sua resposta e use o seguinte formato:\n"
-        "Cedente: <valor>\n"
-        "Código do Cedente: <valor>\n"
-        "Sacado: <valor>\n"
-        "CPF/CNPJ: <valor>\n"
+        "Extraia os seguintes valores do texto abaixo: Beneficiário ou Cedente, CPF/CNPJ do Beneficiário ou Cedente, "
+        "Sacado ou Pagador, CPF/CNPJ do Sacado ou Pagador, Vencimento, Valor do Documento, "
+        "e Data do Processamento ou Data de Emissão.\n\n"
+        
+        " Regras importantes:\n"
+        "- O Beneficiário ou Cedente deve ser extraído separadamente do seu CPF/CNPJ. Não os combine.\n"
+        "- O Beneficiário ou Cedente geralmente aparece próximo ao 'Agência/Código Cedente'.\n"
+        "- Não confunda nomes genéricos como 'Caixa' ou 'Banco' com o Beneficiário correto.\n"
+        "- O CPF/CNPJ do Beneficiário ou Cedente deve estar no formato correto (ex: 00.000.000/0000-00 ou 000.000.000-00).\n"
+        "- O CPF/CNPJ do Sacado também deve estar no formato correto.\n"
+        "- O Vencimento deve ser extraído exatamente como aparece no documento e o formato é dd/mm/yyyy.\n"
+        "- O Valor do Documento está localizado perto de 'Valor do Documento' e é o malor valor em reais.\n"
+        "- Se algum valor não for encontrado no texto, retorne o valor como 'None'.\n\n"
+
+        f" Texto do documento:\n{text}\n\n"
+
+        "Responda sem formatação de texto apenas com os valores igual o exemplo abaixo:\n"
+        "Beneficiário ou Cedente: <somente o nome da empresa ou pessoa>\n"
+        "CPF/CNPJ do Beneficiário ou Cedente: <somente o CPF/CNPJ>\n"
+        "Sacado: <somente o nome da empresa ou pessoa>\n"
+        "CPF/CNPJ Sacado: <somente o CPF/CNPJ>\n"
         "Vencimento: <valor>\n"
-        "Valor do Documento: <valor>\n"
-        "Nosso Número: <valor>\n"
-        "Data do Processamento: <valor>"
+        "Valor do Documento: R$ <valor>\n"
     )
+
     
     response = ollama.chat(model='llama3.1:8b-instruct-q4_K_M', messages=[{"role": "user", "content": prompt}])
     # response = ollama.chat(model='llama3', messages=[{"role": "user", "content": prompt}])
     # response = ollama.chat(model='llama3:8B', messages=[{"role": "user", "content": prompt}])
 
-
-    end_time = time.time()
+    # end_time = time.time()
     
-    elapsed_time = end_time - start_time  # Calcula o tempo decorrido
-    print(f"Tempo de processamento: {elapsed_time:.2f} segundos")
+    # elapsed_time = end_time - start_time  # Calcula o tempo decorrido
+    # print(f"Tempo de processamento: {elapsed_time:.2f} segundos")
     
     return response['message']['content']
-
-# Exemplo de uso
-resultado = extract_invoice_data(text)
-print(resultado)

@@ -17,7 +17,8 @@ load_dotenv()
 interface_email_value = os.getenv('EMAIL_LOGIN')
 interface_password_value = os.getenv('EMAIL_PASSWORD')
 interface_invoice_path = os.getenv('FOLDER_PATH')
-interface_start_date = str(datetime.now().date())
+interface_start_date = datetime.now().strftime('%Y/%m/%d')
+
 interface_on_date = ''
 interface_end_date = ''
 unread_only = False

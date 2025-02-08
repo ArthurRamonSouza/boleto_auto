@@ -1,10 +1,13 @@
 # Created by https://www.toptal.com/developers/gitignore/api/python,venv
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,venv
 
-# PDF files
+# PDF and png files
 *.pdf
+*.png
+
 # AI models
 *.gguf
+
 ### Python ###
 # Byte-compiled / optimized / DLL files
 __pycache__/

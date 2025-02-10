@@ -62,6 +62,20 @@ class Invoice(Base):
             # print(match.groupdict())
             data: dict = match.groupdict()
 
+            if data.get("beneficiary_name"):
+                data["beneficiary_name"] = data["beneficiary_name"][:-1] if data["beneficiary_name"][-1] == '.' else data["beneficiary_name"] 
+
+            if data.get("payer_name"):
+                data["payer_name"] = data["payer_name"][:-1] if data["payer_name"][-1] == '.' else data["payer_name"] 
+
+            if data.get("beneficiary_number"):
+                beneficiary_number_without_hyphen = re.sub(r'-(?=\d+$)', '.', data["beneficiary_number"])
+                data["beneficiary_number"] = re.sub(r'\.(?=[^\.]+$)', '-', beneficiary_number_without_hyphen)
+
+            if data.get("payer_number"):
+                payer_number_without_hyphen = re.sub(r'-(?=\d+$)', '.', data["payer_number"])
+                data["payer_number"] = re.sub(r'\.(?=[^\.]+$)', '-', payer_number_without_hyphen)
+
             if data.get("amount"):
                 data["amount"] = float(data["amount"].split('$')[0].replace('.', '').replace(',', '.'))
 

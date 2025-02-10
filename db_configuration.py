@@ -9,7 +9,6 @@ DATABASE_URL = os.getenv('DATABASE_URL')
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL não definido no .env")
 
-print(DATABASE_URL)
 # Engine is responsible for mannager the db connetion
 engine = create_engine(DATABASE_URL, echo=True)
 

@@ -3,6 +3,7 @@
 
 # PDF and png files
 *.pdf
+*.PDF
 *.png
 
 # AI models

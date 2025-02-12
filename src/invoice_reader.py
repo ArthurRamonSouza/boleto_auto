@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 from pyzbar.pyzbar import decode
 from models.invoice import Invoice
-from model import extract_invoice_data
+from ai_model import extract_invoice_data
 from pdf2image import convert_from_path
 
 class InvoiceReader:
@@ -12,7 +12,7 @@ class InvoiceReader:
     def __init__(self):
         pass
 
-    def __get_image_of_invoices_from_pdf(self, pdf_path: str = '', ppi: int = 300) -> list['Invoice']:
+    def __get_image_of_invoices_from_pdf(self, pdf_path:str='', ppi:int=300) -> list['Invoice']:
         try:
             pdf_images: list[Image.Image] = convert_from_path(pdf_path, dpi=ppi)
             invoice_list: list['Invoice'] = []
@@ -23,13 +23,13 @@ class InvoiceReader:
 
             # Processa cada página do PDF
             for counter_page, image in enumerate(pdf_images, start=1):
-                decoded_images: List = decode(image)
+                decoded_images: list = decode(image)
 
                 if not decoded_images:
                     print(f"No barcodes found on page {counter_page}. Retrying with higher DPI...")
 
                     # Tenta converter novamente com DPI maior
-                    high_res_images = convert_from_path(pdf_path=pdf_path, dpi=600, first_page=counter_page, last_page=counter_page)
+                    high_res_images = convert_from_path(pdf_path=pdf_path, dpi=550, first_page=counter_page, last_page=counter_page)
                     
                     if not high_res_images:
                         print(f"Failed to process page {counter_page} with higher DPI.")
@@ -58,7 +58,8 @@ class InvoiceReader:
 
     def __get_text_from_invoice_image(self, invoice: Invoice) -> str:
         try:
-            return pytesseract.image_to_string(invoice.image, lang='por', config='--psm 6')
+            custom_config = r'--psm 6' 
+            return pytesseract.image_to_string(invoice.image, config=custom_config ,lang='por')
         except Exception as e:
             print('Could not read current image data. Error: ', e)
 
@@ -84,6 +85,7 @@ class InvoiceReader:
 
         # Converter de volta para PIL.Image.Image e salvar em imagens processadas
         preprocessed_image = Image.fromarray(binary)
+        # preprocessed_image.save("pagina_300dpi.png", "PNG")
         invoice.preprocessed_image = preprocessed_image.copy()
 
     def __image_preprocessing(self, image: Image) -> Image:
@@ -105,30 +107,38 @@ class InvoiceReader:
 
             # Converter de volta para PIL.Image.Image e salvar em imagens processadas
             preprocessed_image = Image.fromarray(binary)
+            # preprocessed_image.save("pagina_600dpi.png", "PNG")
             return preprocessed_image.copy()
 
     def get_invoices_from_pdf(self, pdf_path: str) -> list[Invoice]:
-        invoices: list[Invoice] = self.__get_image_of_invoices_from_pdf(pdf_path)
+        try:
 
-        for invoice in invoices:
-            self.__invoice_image_preprocessing(invoice)
-            invoice_text: str = self.__get_text_from_invoice_image(invoice)
-            model_return: str = extract_invoice_data(invoice_text)
-            invoice.model_text_to_invoice(model_return)
+            invoices: list[Invoice] = self.__get_image_of_invoices_from_pdf(pdf_path)
 
-            missing_fields: list = [attr for attr in vars(invoice) if getattr(invoice, attr) is None]
-
-            attempts: int = 0
-            while len(missing_fields) > 0 and attempts < 2:
+            for invoice in invoices:
                 self.__invoice_image_preprocessing(invoice)
                 invoice_text: str = self.__get_text_from_invoice_image(invoice)
+                # print(invoice_text)
                 model_return: str = extract_invoice_data(invoice_text)
                 invoice.model_text_to_invoice(model_return)
 
-                missing_fields = [attr for attr in vars(invoice) if getattr(invoice, attr) is None]
-                attempts += 1
+                missing_fields: list = [attr for attr in vars(invoice) if getattr(invoice, attr) is None]
 
-            if len(missing_fields) > 0:
-                print(f"Error to create Invoice from: {pdf_path}")
-                invoices.remove(invoice)
-        return invoices
+                attempts: int = 0
+                while len(missing_fields) > 0 and attempts < 2:
+                    self.__invoice_image_preprocessing(invoice)
+                    invoice_text: str = self.__get_text_from_invoice_image(invoice)
+                    model_return: str = extract_invoice_data(invoice_text)
+                    invoice.model_text_to_invoice(model_return)
+
+                    missing_fields = [attr for attr in vars(invoice) if getattr(invoice, attr) is None]
+                    attempts += 1
+
+                if len(missing_fields) > 0:
+                    print(f"Error to create Invoice from: {pdf_path}")
+                    invoices.remove(invoice)
+                print(invoice.beneficiary_name)
+                print(invoice.barcode)
+            return invoices
+        except Exception as e:
+            print(f"Error to create Invoice from: {pdf_path}: {e}")

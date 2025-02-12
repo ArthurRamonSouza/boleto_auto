@@ -111,8 +111,8 @@ def create_labeled_entry(label_text, show=""):
 email_entry = create_labeled_entry('📧 Email:')
 password_entry = create_labeled_entry('🔑 Senha:', show="*")
 start_date_entry = create_labeled_entry('📅 Data de Início (YYYY/MM/DD):')
-on_date_entry = create_labeled_entry('📍 Dia Específico (YYYY/MM/DD):')
 end_date_entry = create_labeled_entry('⏳ Data de Fim (YYYY/MM/DD):')
+on_date_entry = create_labeled_entry('📍 Dia Específico (YYYY/MM/DD):')
 
 # Unread emails checkbox
 unread_var = BooleanVar()

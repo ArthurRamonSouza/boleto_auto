@@ -1,15 +1,13 @@
 import os
-import time
-from create_db import create_tables
-from db_configuration import SessionLocal
+from database.create_db import create_tables
+from database.db_configuration import SessionLocal
 from models.invoice import Invoice
 from invoice_reader import InvoiceReader
 
-start_time = time.time()
 download_folder_path = "/home/arthur/Documents/Visual Studio Code/freela/engelmig/boleto_auto/download_folder"
 
 invoices_reader: InvoiceReader = InvoiceReader()
-create_tables()
+# create_tables()
 
 # invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto0.pdf')
 # Beneficiário ou Cedente: ACME Telecomunicações Ltda
@@ -29,43 +27,6 @@ create_tables()
 # Error to create Invoice from: email_downloads/boleto1.pdf
 # Tempo de Processamento Total: 109.19 segundos
 
-invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/Boleto_0000000056_ENGELMIG ENERGIA LTDA_924656.pdf')
-# beneficiary_name: LUCAS MARIANO NETO LTDA
-# beneficiary_number: 10.235.548/0001-74
-# payer_name: ENGELMIG ENERGIA LTDA
-# payer_number: 21.066.139/0063-00
-# due_date: 2025-03-05
-# amount: 232.86
-# Tempo de Processamento Total: 27.45 segundos
-
-# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto(s) - 2025-02-04T164353.895.pdf')
-# beneficiary_name: MARC CENTER HOTEL LTDA
-# beneficiary_number: 12.939.971/0001-80
-# payer_name: ENGELMIG ENERGIA LTDA
-# payer_number: 21.066.139/0001-08
-# due_date: 2025-02-19
-# amount: 1332.9
-# Tempo de Processamento Total: 35.70 segundos
-
-# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/BOLETOSD_1-119-828_001.pdf')
-# beneficiary_name: DINAMICA COMERCIO DE FERRAMENTAS E EQUIP
-# beneficiary_number: 18.581.853/0001.20
-# payer_name: ENGELMIG ENERGIA LTDA.
-# payer_number: 21.066.139/0001.08
-# due_date: 2025-02-04
-# amount: 3460.0
-# Tempo de Processamento Total: 36.95 segundos
-
-# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/BOLETOSX_1-119-828_002.pdf')
-# beneficiary_name: DINAMICA COMERCIO DE FERRAMENTAS E EQUIP
-# beneficiary_number: 18.581.853/0001.20
-# payer_name: ENGELMIG ENERGIA LTDA.
-# payer_number: 21.066.139/0001.08
-# due_date: 2025-04-01
-# amount: 3460.0
-# Tempo de Processamento Total: 33.26 segundos
-
-# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/doc16732420250204174241.pdf')
 # 1
 # beneficiary_name: SACFLEX LTDA
 # beneficiary_number: 50.266.341/0001-81
@@ -145,18 +106,17 @@ invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads
 
 # Tempo de Processamento Total: 411.40 segundos
 
-end_time = time.time()
-elapsed_time = end_time - start_time
+invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/boleto5.pdf') #ppi950
+# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/BOLETOSD_1-119-828_001.pdf')
+# invoices: list[Invoice] = invoices_reader.get_invoices_from_pdf('email_downloads/doc16732420250204174241.pdf')
 
-with SessionLocal() as session:
-    try:
-        for invoice in invoices:
-            download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
-            os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
-            invoice.save_as_file(download_file_path)
-            invoice.save_to_db(session)
+# with SessionLocal() as session:
+#     try:
+#         for invoice in invoices:
+#             download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
+#             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
+#             invoice.save_as_file(download_file_path)
+#             invoice.save_to_db(session)
         
-    except Exception as e:
-        print(f"Error to save in database: {e}")
-
-print(f"Tempo de Processamento Total: {elapsed_time:.2f} segundos")
+#     except Exception as e:
+#         print(f"Error to save in database: {e}")

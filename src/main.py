@@ -1,14 +1,12 @@
 import os
-from create_db import create_tables
-from db_configuration import SessionLocal
 import gui
-import time
+from database.create_db import create_tables
 from imap_handler import get_imap_handler, Imbox
 from invoice_reader import InvoiceReader, Invoice
+from database.db_configuration import SessionLocal
 
 gui.root.mainloop()
 
-start_time = time.time()
 create_tables()
 
 email, password = gui.get_interface_login()
@@ -27,7 +25,7 @@ for (uuid, message) in messages:
     
     if len(message.attachments) > 0:
         for attachment in message.attachments:
-            attachment_file: str = attachment['filename']
+            attachment_file: str = attachment['filename'].lower()
 
             if '.pdf' in attachment_file:
                 email_download_file_path: str = f'email_downloads/{attachment_file}'
@@ -37,21 +35,22 @@ for (uuid, message) in messages:
                     try:
                         file.write(attachment['content'].read())
                         invoices: list[Invoice] = invoice_reader.get_invoices_from_pdf(email_download_file_path)
-                        invoice_list.append(invoices.copy())
+                        invoice_list.extend(invoices)
                     except Exception as e:
                         print('Error in class main: ', e)
                         
 with SessionLocal() as session:
-    try:
-        for invoice in invoice_list:
-            download_file_path: str = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
+    for invoice in invoice_list:
+        try:
+            download_file_path = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
+
             invoice.save_as_file(download_file_path)
             invoice.save_to_db(session)
-        
-    except Exception as e:
-        print(f"Error to save in database: {e}")
 
-end_time = time.time()
-elapsed_time = end_time - start_time
-print(f"Tempo de Processamento Total: {elapsed_time:.2f} segundos")
+            session.commit()
+        except Exception as e:
+            session.rollback()
+            print(f"Error saving invoice {invoice.barcode}: {e}")
+
+print("Finished processing invoices.")

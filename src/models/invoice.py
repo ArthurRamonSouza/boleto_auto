@@ -3,7 +3,7 @@ import io
 from PIL import Image
 from datetime import datetime
 
-from db_configuration import Base
+from database.db_configuration import Base
 from sqlalchemy.orm import Session
 from sqlalchemy import Column, Integer, String, Float, Date, LargeBinary
 

@@ -1,4 +1,4 @@
-from db_configuration import Base, engine
+from database.db_configuration import Base, engine
 from models import *
 
 # Create database tables

@@ -20,7 +20,6 @@ def main():
         invoice_list = gmail_handler.get_invoices(email, password, unread_only, date_gt, date_on, date_lt)
     else:
         invoice_list = outlook_handler.get_invoices(date_gt, date_on, date_lt, unread_only)
-        print("invioce list", invoice_list)
 
     save_invoices_into_db_and_file_explorer(invoice_list, download_folder_path)
 

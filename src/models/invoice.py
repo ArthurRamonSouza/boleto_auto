@@ -83,7 +83,6 @@ class Invoice(Base):
 
             for key, value in data.items():
                 if value:
-                    print(f'{key}: {value}')
                     setattr(self, key, value)
 
     def save_as_file(self, download_file_path: str):

@@ -1,9 +1,7 @@
 from imbox import Imbox
 from datetime import datetime
 
-IMAP_SERVER: str = 'imap.gmail.com'
-
-def get_imap_handler(email: str, password: str, unread: bool, date_gt: str, date_on: str, date_lt: str, filters: dict) -> Imbox:
+def get_gmail_handler(email: str, password: str, unread: bool, date_gt: str, date_on: str, date_lt: str, filters: dict) -> Imbox:
     # Message kwargs filters logic
     if unread:
         filters['unread'] = True
@@ -15,4 +13,4 @@ def get_imap_handler(email: str, password: str, unread: bool, date_gt: str, date
     elif date_on:
         filters['date__on'] = datetime.strptime(date_on, '%Y/%m/%d').date()
 
-    return Imbox(IMAP_SERVER, username=email, password=password, ssl=True)
+    return Imbox('imap.gmail.com', username=email, password=password, ssl=True)

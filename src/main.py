@@ -1,7 +1,7 @@
 import os
 import gui
 from database.create_db import create_tables
-from imap_handler import get_imap_handler, Imbox
+from email.gmail_handler import get_gmail_handler, Imbox
 from invoice_reader import InvoiceReader, Invoice
 from database.db_configuration import SessionLocal
 
@@ -14,7 +14,7 @@ download_folder_path = gui.get_interface_download_folder_path()
 date_gt, date_on, date_lt, unread_only = gui.get_interface_filters()
 
 filters: dict = {'raw': 'has:attachment'}
-email_halder: Imbox = get_imap_handler(email, password, unread_only, date_gt, date_on, date_lt, filters)
+email_halder: Imbox = get_gmail_handler(email, password, unread_only, date_gt, date_on, date_lt, filters)
 messages = email_halder.messages(**filters)
 
 invoice_reader: InvoiceReader = InvoiceReader()

@@ -1,7 +1,6 @@
 import os
+from email_handler import gmail_handler, outlook_handler
 import gui
-from email import outlook
-from email import gmail_handler
 from models.invoice import Invoice
 from database.create_db import create_tables
 from database.db_configuration import SessionLocal
@@ -17,10 +16,11 @@ def main():
 
     invoice_list: list[Invoice] = []
 
-    if os.getenv('EMAIL').lower() == 'gmail':
+    if os.getenv('EMAIL_SERVER').lower() == 'gmail':
         invoice_list = gmail_handler.get_invoices(email, password, unread_only, date_gt, date_on, date_lt)
     else:
-        invoice_list = outlook.get_invoices()
+        invoice_list = outlook_handler.get_invoices(date_gt, date_on, date_lt, unread_only)
+        print("invioce list", invoice_list)
 
     save_invoices_into_db_and_file_explorer(invoice_list, download_folder_path)
 

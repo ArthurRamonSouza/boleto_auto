@@ -14,7 +14,7 @@ text_color = '#2C3E50'  # Dark Blue
 
 # RPA (Robotic Process Automation) variables to store user inputs and settings
 load_dotenv()
-interface_email_value = os.getenv('EMAIL_LOGIN')
+interface_email_value = os.getenv('EMAIL_ADDRESS')
 interface_password_value = os.getenv('EMAIL_PASSWORD')
 interface_invoice_path = os.getenv('FOLDER_PATH')
 interface_start_date = datetime.now().strftime('%Y/%m/%d')

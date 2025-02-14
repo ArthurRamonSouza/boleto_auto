@@ -17,9 +17,8 @@ load_dotenv()
 interface_email_value = os.getenv('EMAIL_ADDRESS')
 interface_password_value = os.getenv('EMAIL_PASSWORD')
 interface_invoice_path = os.getenv('FOLDER_PATH')
-interface_start_date = datetime.now().strftime('%Y/%m/%d')
-
-interface_on_date = ''
+interface_start_date = ''
+interface_on_date = datetime.now().strftime('%Y/%m/%d')
 interface_end_date = ''
 unread_only = False
 
@@ -35,8 +34,8 @@ def set_rpa_var():
     interface_password_value = password_entry.get() or interface_password_value
     interface_invoice_path = invoice_path_entry.get() or interface_invoice_path
     interface_start_date = start_date_entry.get() or interface_start_date
-    interface_on_date = on_date_entry.get() or interface_on_date
     interface_end_date = end_date_entry.get() or interface_end_date
+    interface_on_date = on_date_entry.get() or interface_on_date
     unread_only = unread_var.get() or unread_only
 
 def on_closing():

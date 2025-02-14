@@ -42,7 +42,7 @@ for (uuid, message) in messages:
 with SessionLocal() as session:
     for invoice in invoice_list:
         try:
-            download_file_path = f'{download_folder_path}/{invoice.due_date} - {invoice.amount} - {invoice.beneficiary_name}.png'
+            download_file_path = f'{download_folder_path}/{invoice.due_date} - {invoice.value} - {invoice.beneficiary_name}.png'
             os.makedirs(os.path.dirname(download_file_path), exist_ok=True)
 
             invoice.save_as_file(download_file_path)
@@ -52,5 +52,3 @@ with SessionLocal() as session:
         except Exception as e:
             session.rollback()
             print(f"Error saving invoice {invoice.barcode}: {e}")
-
-print("Finished processing invoices.")

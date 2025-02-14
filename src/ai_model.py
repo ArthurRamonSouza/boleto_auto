@@ -1,9 +1,6 @@
 import ollama
-# import time
 
 def extract_invoice_data(text) -> str:
-    # start_time = time.time() 
-
     prompt = (
         "Extraia os seguintes valores do texto abaixo: Beneficiário ou Cedente, CPF/CNPJ do Beneficiário ou Cedente, "
         "Sacado ou Pagador, CPF/CNPJ do Sacado ou Pagador, Vencimento e Valor do Documento.\n\n"
@@ -29,13 +26,5 @@ def extract_invoice_data(text) -> str:
         "Valor do Documento: R$ <valor>\n"
     )
     
-    response = ollama.chat(model='llama3.1:8b-instruct-q4_K_M', messages=[{"role": "user", "content": prompt}], options={"temperature": 0.0})
-    # response = ollama.chat(model='deepseek-r1:1.5b', messages=[{"role": "user", "content": prompt}], options={"temperature": 0.0})
-    # response = ollama.chat(model='llama3:8B', messages=[{"role": "user", "content": prompt}])
-
-    # end_time = time.time()
-    
-    # elapsed_time = end_time - start_time  # Calcula o tempo decorrido
-    # print(f"Tempo de processamento: {elapsed_time:.2f} segundos")
-    
+    response = ollama.chat(model='llama3.1:8b-instruct-q4_K_M', messages=[{"role": "user", "content": prompt}], options={"temperature": 0.0})    
     return response['message']['content']

@@ -118,7 +118,6 @@ class InvoiceReader:
             for invoice in invoices:
                 self.__invoice_image_preprocessing(invoice)
                 invoice_text: str = self.__get_text_from_invoice_image(invoice)
-                # print(invoice_text)
                 model_return: str = extract_invoice_data(invoice_text)
                 invoice.model_text_to_invoice(model_return)
 
@@ -130,6 +129,7 @@ class InvoiceReader:
                     invoice_text: str = self.__get_text_from_invoice_image(invoice)
                     model_return: str = extract_invoice_data(invoice_text)
                     invoice.model_text_to_invoice(model_return)
+                    invoice.check_value()
 
                     missing_fields = [attr for attr in vars(invoice) if getattr(invoice, attr) is None]
                     attempts += 1
@@ -137,8 +137,6 @@ class InvoiceReader:
                 if len(missing_fields) > 0:
                     print(f"Error to create Invoice from: {pdf_path}")
                     invoices.remove(invoice)
-                print(invoice.beneficiary_name)
-                print(invoice.barcode)
             return invoices
         except Exception as e:
             print(f"Error to create Invoice from: {pdf_path}: {e}")

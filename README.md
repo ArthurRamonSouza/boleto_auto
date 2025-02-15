@@ -4,11 +4,11 @@ Este projeto processa faturas em PDF enviadas por e-mail, extrai dados como cód
 # 🚀 Como Instalar e Rodar
 ## Requisitos
 Para rodar o executável corretamente, sua máquina precisa das seguintes dependências instaladas:
-- **Python 3.12**
-- **Tesseract OCR**
-- **MySQL**
-- **Ollama e modelo llama3.1:8b-instruct-q4_K_M**
-- **Bibliotecas Python** (instaladas automaticamente ao rodar o executável)
+1. **Python 3.12**
+2. **Tesseract OCR** ([Para Windows](https://github.com/UB-Mannheim/tesseract/wiki)) ([Para Linux](https://github.com/UB-Mannheim/tesseract/wiki))
+3. **MySQL**
+4. **Ollama e modelo llama3.1:8b-instruct-q4_K_M**
+5. **Bibliotecas Python** (instaladas automaticamente ao rodar o executável)
 
 ### Rodando o Executável
 Se estiver usando a versão compilada:

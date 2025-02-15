@@ -80,6 +80,8 @@ class Invoice(Base):
 
             if data.get("due_date"):
                 data["due_date"] = datetime.strptime(data["due_date"], "%d/%m/%Y").date()
+            
+            check_value()
 
             for key, value in data.items():
                 if value:

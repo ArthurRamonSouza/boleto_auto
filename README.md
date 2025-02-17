@@ -9,6 +9,7 @@ Para rodar o executável corretamente, sua máquina precisa das seguintes depend
 3. **MySQL**
 4. **GCC e G++**
 5. **Windows SDK**
+6. **Git**
 6. **Ollama e modelo llama3.1:8b-instruct-q4_K_M**
 7. **Bibliotecas Python** (instaladas automaticamente ao rodar o executável)
 
